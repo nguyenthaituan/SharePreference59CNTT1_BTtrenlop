@@ -11,38 +11,24 @@ import android.widget.RadioButton;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public  static final  String tenSharePref = "my_share_pref";
-    public  static final  String keyTen = "ten";
-    public  static final  String keyNgaySinh = "ngaysinh";
-    public  static final  String keyNam = "Nam";
-    public  static final  String keyNu = "Nu";
-    public  static final  String keySDT = "SDT";
-    EditText Ten, Ngaysinh,Sdt;
-    RadioButton rdbNam, rdbNu;
-    Button luu, doc, xoa;
+    //định nghĩa hàm
+    public  static final String tenSharePref = "my_share_pref";
+    public  static final String keyTen = "ten";
+    public  static final String keyngaysinh = "ngay_sinh";
+    public  static final String keynam = "nam";
+    public  static final String keynu = "nu";
+    public  static final String keysdt = "sdt";
+
+
+    EditText edtName, edtDate, edtPhone;
+    RadioButton rbNam, rbNu;
+    Button btnLuu, btnDoc, btnXoa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        adViews();
-    }
-
-    private void adViews() {
-        Ten = findViewById(R.id.edtNames);
-        Ngaysinh = findViewById(R.id.edtBirths);
-        Sdt = findViewById(R.id.edtNumber);
-
-        rdbNam = findViewById(R.id.rbMan);
-        rdbNu = findViewById(R.id.rbWoman);
-
-        luu = findViewById(R.id.btnSave);
-        doc = findViewById(R.id.btnRead);
-        xoa = findViewById(R.id.btnDelete);
-
-        luu.setOnClickListener(this);
-        doc.setOnClickListener(this);
-        xoa.setOnClickListener(this);
+        addView();
     }
 
     @Override
@@ -51,54 +37,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         docPref();
     }
 
+    private  void  addView(){
+        edtName = findViewById(R.id.edtNames);
+        edtDate = findViewById(R.id.edtBirths);
+        edtPhone = findViewById(R.id.edtNumber);
+        rbNam = findViewById(R.id.rbMan);
+        rbNu = findViewById(R.id.rbWoman);
+        btnLuu = findViewById(R.id.btnSave);
+        btnDoc = findViewById(R.id.btnRead);
+        btnXoa = findViewById(R.id.btnDelete);
+        btnLuu.setOnClickListener(this);
+        btnDoc.setOnClickListener(this);
+        btnXoa.setOnClickListener(this);
+    }
+
     @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id)
-        {
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id){
             case R.id.btnSave: luuPref(); break;
             case R.id.btnRead: docPref(); break;
             case R.id.btnDelete: xoaThongTin(); break;
-
         }
     }
 
-    private void xoaThongTin() {
-        Ten.setText("");
-        Ngaysinh.setText("");
-        Sdt.setText("");
-        rdbNam.setChecked(true);
-        rdbNu.setChecked(false);
-    }
-
-    private void docPref() {
+    private  void luuPref(){
         SharedPreferences sharedPreferences = getSharedPreferences(tenSharePref, MODE_PRIVATE);
-        if (sharedPreferences!=null)
-        {
-            String ten = sharedPreferences.getString(keyTen, "nhap ten");
-            String ngaySinh = sharedPreferences.getString(keyNgaySinh, "was't born");
-            String sdt = sharedPreferences.getString(keySDT,"not phone");
-            boolean nam = sharedPreferences.getBoolean(keyNam,true);
-            boolean nu = sharedPreferences.getBoolean(keyNu,false);
-
-            Ten.setText(ten);
-            Ngaysinh.setText(ngaySinh);
-            Sdt.setText(sdt);
-            rdbNam.setChecked(nam);
-            rdbNu.setChecked(nu);
-        }
-    }
-
-    private void luuPref() {
-        SharedPreferences sharedPreferences = getSharedPreferences(tenSharePref, MODE_PRIVATE);
-        if (sharedPreferences!=null)
-        {
+        if(sharedPreferences != null){
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(keyTen,Ten.getText().toString());
-            editor.putString(keyNgaySinh, Ngaysinh.getText().toString());
-            editor.putBoolean(keyNam, rdbNam.isChecked());
-            editor.putBoolean(keyNu, rdbNu.isChecked());
-            editor.putString(keySDT,Sdt.getText().toString());
+            //lưu
+            //kiểu textview
+            editor.putString(keyTen, edtName.getText().toString());
+            editor.putString(keyngaysinh, edtDate.getText().toString());
+
+            //kiểu radiobutton
+            editor.putBoolean(keynam, rbNam.isChecked());
+            editor.putBoolean(keynu, rbNu.isChecked());
+
+            editor.putString(keysdt, edtPhone.getText().toString());
+
+            editor.commit(); // dữ liệu ít nên lưu bằng commit
         }
+    }
+
+
+    private  void docPref(){
+        SharedPreferences sharedPreferences = getSharedPreferences(tenSharePref, MODE_PRIVATE);
+        if(sharedPreferences != null){
+            String ten = sharedPreferences.getString(keyTen, "Chưa có tên");
+            String ngaySinh = sharedPreferences.getString(keyngaysinh, "Chưa sinh ra");
+
+            boolean nam = sharedPreferences.getBoolean(keynam, true);
+            boolean nu = sharedPreferences.getBoolean(keynu, false);
+
+            String sdt = sharedPreferences.getString(keysdt, "Chưa có điện thoại");
+
+            edtName.setText(ten);
+            edtDate.setText(ngaySinh);
+            rbNam.setChecked(nam);
+            rbNu.setChecked(nu);
+            edtPhone.setText(sdt);
+        }
+    }
+
+    private void xoaThongTin(){
+        edtName.setText("");
+        edtDate.setText("");
+        rbNam.setChecked(true);
+        rbNu.setChecked(false);
+        edtPhone.setText("");
     }
 }
